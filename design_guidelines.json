@@ -1,0 +1,171 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "RetroCade X",
+      "tone": "Nostalgic, High-Energy, Arcade, Pixel-Perfect",
+      "aesthetic": "Retrofuturism meets Gameboy Color",
+      "core_values": [
+        "Fun over Function",
+        "Immersion over Minimalism",
+        "Discovery over Search"
+      ]
+    },
+    "typography": {
+      "font_family": {
+        "headings": "\"Press Start 2P\", \"VT323\", cursive",
+        "body": "\"Space Mono\", \"Chakra Petch\", monospace",
+        "ui": "\"Share Tech Mono\", monospace"
+      },
+      "scale": {
+        "hero": "text-4xl md:text-6xl lg:text-7xl tracking-tighter",
+        "h1": "text-3xl md:text-5xl",
+        "h2": "text-2xl md:text-4xl",
+        "h3": "text-xl md:text-2xl",
+        "body_lg": "text-lg leading-relaxed",
+        "body_sm": "text-sm opacity-80"
+      },
+      "imports": [
+        "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Chakra+Petch:wght@400;600;700&family=Share+Tech+Mono&display=swap"
+      ]
+    },
+    "colors": {
+      "palette": {
+        "background": {
+          "default": "#0f0f1b",
+          "paper": "#1a1a2e",
+          "card": "#232342",
+          "overlay": "rgba(15, 15, 27, 0.85)"
+        },
+        "primary": {
+          "main": "#8BAC0F",
+          "hover": "#9BBC0F",
+          "contrast": "#0f380f"
+        },
+        "secondary": {
+          "main": "#FF0055",
+          "hover": "#FF3377",
+          "contrast": "#FFFFFF"
+        },
+        "accent": {
+          "cyan": "#00F0FF",
+          "purple": "#BD00FF",
+          "yellow": "#FFD700"
+        },
+        "text": {
+          "primary": "#E0E0E0",
+          "secondary": "#A0A0B0",
+          "muted": "#606070"
+        }
+      },
+      "gradients": {
+        "hero": "linear-gradient(135deg, #0f0f1b 0%, #232342 100%)",
+        "card_hover": "linear-gradient(45deg, rgba(139, 172, 15, 0.1), rgba(0, 240, 255, 0.1))",
+        "crt_overlay": "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06))"
+      }
+    },
+    "spacing": {
+      "container_padding": "p-4 md:p-8 lg:p-12",
+      "section_gap": "gap-12 md:gap-24",
+      "grid_gap": "gap-4 md:gap-6",
+      "border_radius": {
+        "sm": "rounded-sm",
+        "md": "rounded",
+        "lg": "rounded-lg",
+        "pill": "rounded-full"
+      }
+    },
+    "layout": {
+      "grid_system": "Bento Grid",
+      "container_width": "max-w-7xl mx-auto",
+      "strategies": {
+        "game_list": "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6",
+        "hero": "flex flex-col md:flex-row items-center justify-between gap-12",
+        "dashboard": "grid grid-cols-1 md:grid-cols-12 gap-6"
+      }
+    },
+    "visual_enhancers": {
+      "shadows": {
+        "neon": "0 0 10px rgba(139, 172, 15, 0.5), 0 0 20px rgba(139, 172, 15, 0.3)",
+        "card": "0 10px 30px -10px rgba(0,0,0,0.5)",
+        "retro": "4px 4px 0px 0px rgba(0,0,0,1)"
+      },
+      "borders": {
+        "default": "border border-white/10",
+        "active": "border border-primary/50",
+        "retro": "border-2 border-white/20"
+      },
+      "effects": [
+        "backdrop-blur-md",
+        "mix-blend-overlay",
+        "grayscale hover:grayscale-0 transition-all duration-300"
+      ]
+    },
+    "components": {
+      "Button": {
+        "variants": ["pixel", "neon", "ghost"],
+        "default": "pixel",
+        "styles": {
+          "pixel": "font-['Press_Start_2P'] text-xs px-6 py-4 bg-[#8BAC0F] text-[#0f380f] hover:bg-[#9BBC0F] shadow-[4px_4px_0px_0px_#000] active:translate-y-1 active:shadow-none transition-all",
+          "neon": "font-['Space_Mono'] border border-[#00F0FF] text-[#00F0FF] hover:bg-[#00F0FF] hover:text-black shadow-[0_0_10px_rgba(0,240,255,0.5)] transition-all uppercase tracking-widest",
+          "ghost": "hover:bg-white/5 text-white/80 hover:text-white transition-colors"
+        }
+      },
+      "Card": {
+        "styles": "bg-[#1a1a2e] border border-white/5 hover:border-primary/50 overflow-hidden relative group transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+      },
+      "Input": {
+        "styles": "bg-black/40 border-2 border-white/10 focus:border-primary text-white font-['Space_Mono'] placeholder:text-white/30 p-4 rounded-none"
+      },
+      "Badge": {
+        "styles": "font-['VT323'] text-lg px-2 py-0.5 bg-white/10 border border-white/20 text-white/90 uppercase"
+      }
+    },
+    "motion": {
+      "transitions": {
+        "default": "transition-all duration-300 ease-out",
+        "slow": "transition-all duration-700 ease-in-out"
+      },
+      "animations": {
+        "hover_scale": "hover:scale-105",
+        "click_press": "active:scale-95"
+      }
+    },
+    "accessibility": {
+      "rules": [
+        "Ensure text contrast > 4.5:1",
+        "Interactive elements must have :focus-visible states",
+        "Use aria-label for icon-only buttons",
+        "Do not rely on color alone for game status"
+      ]
+    },
+    "media": {
+      "image_urls": {
+        "hero_bg": "https://images.pexels.com/photos/1293261/pexels-photo-1293261.jpeg",
+        "neon_grid": "https://images.unsplash.com/photo-1769120061960-df4f173e3734",
+        "generic_cartridge": "https://images.unsplash.com/photo-1591462391994-cb7614f54aff",
+        "controller_accent": "https://images.unsplash.com/photo-1654648662327-5d4d32cf67bd",
+        "arcade_sign": "https://images.unsplash.com/photo-1688550181338-e013f4b72aba",
+        "error_state": "https://images.unsplash.com/photo-1772080506577-c0297928db01"
+      }
+    },
+    "instructions_to_main_agent": [
+      "1. INSTALL FONTS: Add the Google Fonts link to the HTML head immediately.",
+      "2. CONFIGURE TAILWIND: Update tailwind.config.js to include the custom font families (Press Start 2P, VT323, etc.) and colors defined above.",
+      "3. BUILD LAYOUT: Use the 'Bento Grid' strategy for the game library. Avoid simple lists.",
+      "4. EMULATOR VIEW: Create a 'Theater Mode' for the emulator. Darken the background, center the screen, add a 'CRT' scanline overlay using CSS.",
+      "5. INTERACTION: Use the 'pixel' button style for primary actions (Play, Download).",
+      "6. DATA-TESTID: Add data-testid to all interactive elements (e.g., 'game-card-mario', 'play-button').",
+      "7. NOSTALGIA: Use pixel art icons or 8-bit style SVGs where possible.",
+      "8. SOUND: (Optional) If possible, add subtle hover sounds (blip) using a simple audio hook, but keep it muted by default."
+    ],
+    "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+      "Don't make generic centered layouts.",
+      "Create depth through layered design elements with z-index hierarchy.",
+      "Use glass-morphism effects with backdrop filters (12-24px blur) for modals/overlays.",
+      "Every interaction needs micro-animations - hover states, transitions.",
+      "Use 2-3x more spacing than feels comfortable.",
+      "Subtle grain textures, noise overlays, custom cursors.",
+      "Main agent relies on these image URLs. Missing categories = placeholder text which is FORBIDDEN."
+    ]
+  }
+}
