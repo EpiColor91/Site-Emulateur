@@ -98,6 +98,21 @@ async def create_game(game_data: GameCreate):
     await db.games.insert_one(doc)
     return game
 
+@api_router.put("/games/{game_id}", response_model=Game)
+async def update_game(game_id: str, game_data: GameCreate):
+    """Update a game"""
+    game = await db.games.find_one({"id": game_id}, {"_id": 0})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    # Update game
+    update_data = game_data.model_dump()
+    await db.games.update_one({"id": game_id}, {"$set": update_data})
+    
+    # Return updated game
+    updated_game = await db.games.find_one({"id": game_id}, {"_id": 0})
+    return updated_game
+
 @api_router.delete("/games/{game_id}")
 async def delete_game(game_id: str):
     """Delete a game"""

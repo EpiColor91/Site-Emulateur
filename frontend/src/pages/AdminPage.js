@@ -16,6 +16,7 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(false);
+  const [editingGame, setEditingGame] = useState(null);
   
   const [formData, setFormData] = useState({
     title: "",
