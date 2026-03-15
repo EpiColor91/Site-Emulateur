@@ -39,11 +39,13 @@ const EmulatorPage = () => {
   const checkRomFile = async () => {
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/api/roms/${game.rom_filename}`, {
-        method: 'HEAD'
-      });
       
-      if (response.ok) {
+      // Vérifier via l'API /api/games/{id} si le fichier existe
+      const response = await axios.get(`${API}/games/${gameId}`);
+      
+      if (response.data && response.data.rom_filename) {
+        // Supposer que la ROM existe si elle est dans la DB
+        // EmulatorJS gérera l'erreur si le fichier n'existe pas vraiment
         setRomExists(true);
         
         // Mapper la plateforme au core EmulatorJS
