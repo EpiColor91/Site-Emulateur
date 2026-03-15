@@ -1,72 +1,1156 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site Emulateur</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background: #333;
-            color: #fff;
-            padding: 10px 20px;
-            text-align: center;
-        }
-        main {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-        }
-        footer {
-            text-align: center;
-            padding: 10px;
-            background: #333;
-            color: #fff;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-        }
-        a {
-            color: #3498db;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RETROCADE X</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ==================== RESET & BASE ==================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+```
+:root {
+  --bg-deep:   #0f0f1b;
+  --bg-dark:   #1a1a2e;
+  --bg-mid:    #232342;
+  --green:     #8BAC0F;
+  --green-lt:  #9BBC0F;
+  --cyan:      #00F0FF;
+  --red:       #FF0055;
+  --text:      #E0E0E0;
+  --text-dim:  #A0A0B0;
+  --text-dead: #606070;
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  overflow-x: hidden;
+}
+
+/* ==================== SCROLLBAR ==================== */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--green); }
+::-webkit-scrollbar-thumb:hover { background: var(--green-lt); }
+
+/* ==================== RETRO GRID ==================== */
+.retro-grid {
+  background-image:
+    linear-gradient(rgba(139,172,15,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139,172,15,.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* ==================== CRT SCANLINES ==================== */
+.crt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,.18) 3px,
+    rgba(0,0,0,.18) 4px
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes neonPulse {
+  0%,100% { text-shadow: 0 0 10px rgba(139,172,15,.5), 0 0 20px rgba(139,172,15,.3); }
+  50%      { text-shadow: 0 0 20px rgba(139,172,15,.9), 0 0 40px rgba(139,172,15,.5), 0 0 60px rgba(139,172,15,.2); }
+}
+@keyframes blink   { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+@keyframes scanMove{ 0%{transform:translateY(-100%)} 100%{transform:translateY(100vh)} }
+@keyframes glitch  {
+  0%{transform:translate(0)} 20%{transform:translate(-2px,2px)} 40%{transform:translate(-2px,-2px)}
+  60%{transform:translate(2px,2px)} 80%{transform:translate(2px,-2px)} 100%{transform:translate(0)}
+}
+@keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.neon-text  { animation: neonPulse 2s ease-in-out infinite; }
+.blink      { animation: blink 1s step-end infinite; }
+.loading    { animation: pulse 1.2s ease-in-out infinite; }
+.fade-up    { animation: fadeUp .5s ease forwards; }
+
+/* ==================== PAGES ==================== */
+.page { display: none; min-height: 100vh; }
+.page.active { display: block; }
+
+/* ==================== BUTTONS ==================== */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Press Start 2P', cursive; font-size: .65rem;
+  padding: 1rem 1.5rem;
+  background: var(--green); color: #0f380f;
+  border: none; cursor: pointer;
+  box-shadow: 4px 4px 0 #000;
+  transition: all .15s;
+}
+.btn-primary:hover  { background: var(--green-lt); }
+.btn-primary:active { transform: translateY(4px); box-shadow: none; }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: 'Space Mono', monospace; font-size: .8rem;
+  background: none; border: 2px solid var(--cyan); color: var(--cyan);
+  padding: .5rem 1rem; cursor: pointer;
+  transition: all .2s;
+}
+.btn-ghost:hover { background: var(--cyan); color: #000; }
+
+.btn-danger {
+  background: none; border: none; color: var(--red);
+  cursor: pointer; padding: .4rem; transition: all .2s;
+  display: flex; align-items: center;
+}
+.btn-danger:hover { background: var(--red); color: #fff; }
+
+.btn-back {
+  display: inline-flex; align-items: center; gap: .4rem;
+  background: none; border: none; color: var(--green);
+  font-family: 'Space Mono', monospace; font-size: .85rem;
+  cursor: pointer; transition: color .2s;
+}
+.btn-back:hover { color: var(--green-lt); }
+
+/* ==================== HOME PAGE ==================== */
+#page-home header {
+  position: relative; overflow: hidden;
+  border-bottom: 4px solid var(--green);
+}
+#page-home header .hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--bg-deep), var(--bg-dark), var(--bg-mid));
+  opacity: .95;
+}
+#page-home header .hero-content {
+  position: relative; z-index: 2;
+  max-width: 900px; margin: 0 auto;
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+}
+.hero-icon {
+  margin: 0 auto 2rem;
+  width: 80px; height: 80px;
+  color: var(--green);
+}
+.hero-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(1.6rem, 5vw, 3.5rem);
+  color: var(--green);
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+}
+.hero-sub {
+  font-size: .9rem;
+  color: var(--text-dim);
+  max-width: 560px; margin: 0 auto 2rem;
+  line-height: 1.8;
+}
+.insert-coin {
+  display: inline-block;
+  padding: .75rem 1.5rem;
+  background: var(--bg-mid);
+  border: 2px solid var(--cyan);
+  color: var(--cyan);
+  font-family: 'VT323', monospace; font-size: 1.5rem;
+}
+.info-banner {
+  background: var(--bg-mid);
+  border-bottom: 2px solid var(--red);
+  padding: 1rem 1.5rem;
+  text-align: center;
+}
+.info-banner p {
+  font-size: .78rem; color: var(--text);
+  display: flex; align-items: center; justify-content: center; gap: .5rem; flex-wrap: wrap;
+}
+.info-banner a, .info-banner button.link-btn {
+  color: var(--green); text-decoration: underline;
+  background: none; border: none; cursor: pointer;
+  font-family: 'Space Mono', monospace; font-size: .78rem;
+}
+.info-banner a:hover, .info-banner button.link-btn:hover { color: var(--green-lt); }
+
+main.platforms-section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+.section-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(1rem, 3vw, 1.8rem);
+  text-align: center; color: #fff;
+  margin-bottom: 3rem;
+}
+.platforms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.platform-card {
+  position: relative;
+  background: var(--bg-dark);
+  border: 2px solid rgba(255,255,255,.1);
+  overflow: hidden; cursor: pointer;
+  transition: all .3s;
+}
+.platform-card:hover {
+  border-color: var(--green);
+  transform: translateY(-6px);
+  box-shadow: 0 0 30px rgba(139,172,15,.4);
+}
+.platform-card .card-img {
+  position: relative; height: 180px; overflow: hidden;
+}
+.platform-card .card-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: .6; filter: grayscale(1);
+  transition: all .5s;
+}
+.platform-card:hover .card-img img {
+  opacity: .85; filter: grayscale(0);
+  transform: scale(1.08);
+}
+.platform-card .card-img::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, var(--bg-dark), transparent 60%);
+}
+.platform-card .card-body { padding: 1.2rem; }
+.platform-card h3 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: .7rem; color: var(--green);
+  margin-bottom: .75rem; line-height: 1.6;
+}
+.platform-card .card-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'VT323', monospace; font-size: 1.1rem; color: var(--text-dim);
+}
+.badge-green {
+  padding: .2rem .6rem;
+  background: rgba(139,172,15,.15);
+  border: 1px solid var(--green);
+  color: var(--green);
+  font-family: 'VT323', monospace; font-size: 1rem;
+}
+
+footer {
+  border-top: 2px solid rgba(255,255,255,.08);
+  padding: 2rem 1rem; margin-top: 2rem;
+  text-align: center;
+  font-family: 'VT323', monospace; font-size: 1.2rem;
+  color: var(--text-dead);
+}
+
+/* ==================== LIBRARY PAGE ==================== */
+#page-library header.lib-header {
+  background: var(--bg-dark);
+  border-bottom: 4px solid var(--green);
+  position: sticky; top: 0; z-index: 50;
+  padding: 1.5rem;
+}
+#page-library header.lib-header .inner {
+  max-width: 1100px; margin: 0 auto;
+}
+.lib-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(.9rem, 2.5vw, 1.6rem);
+  color: var(--green); margin: .8rem 0 1rem;
+}
+.search-wrap { position: relative; }
+.search-wrap svg {
+  position: absolute; left: 1rem; top: 50%;
+  transform: translateY(-50%);
+  width: 18px; height: 18px; color: var(--text-dead);
+  pointer-events: none;
+}
+.search-input {
+  width: 100%; padding: 1rem 1rem 1rem 3rem;
+  background: rgba(0,0,0,.4);
+  border: 2px solid rgba(255,255,255,.1);
+  color: #fff; font-family: 'Space Mono', monospace; font-size: .85rem;
+  outline: none; transition: border-color .2s;
+}
+.search-input:focus { border-color: var(--green); }
+.search-input::placeholder { color: rgba(255,255,255,.25); }
+
+.games-grid {
+  max-width: 1100px; margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1rem;
+}
+.game-card {
+  background: var(--bg-dark);
+  border: 1px solid rgba(255,255,255,.08);
+  overflow: hidden; cursor: pointer;
+  transition: all .3s;
+}
+.game-card:hover {
+  border-color: var(--green);
+  transform: translateY(-6px);
+  box-shadow: 0 0 20px rgba(139,172,15,.3);
+}
+.game-card .game-img {
+  position: relative;
+  aspect-ratio: 3/4; overflow: hidden;
+  background: var(--bg-mid);
+}
+.game-card .game-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .5s;
+}
+.game-card:hover .game-img img { transform: scale(1.1); }
+.game-card .game-body { padding: .75rem; }
+.game-card h3 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: .55rem; color: #fff;
+  margin-bottom: .5rem; line-height: 1.6;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.game-card .game-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'VT323', monospace; font-size: .95rem; color: var(--text-dim);
+}
+.badge-white {
+  padding: .1rem .4rem;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.18);
+  color: rgba(255,255,255,.85);
+  font-family: 'VT323', monospace; font-size: .85rem;
+  text-transform: uppercase;
+}
+
+/* ==================== GAME DETAIL PAGE ==================== */
+#page-detail header.detail-header {
+  background: var(--bg-dark);
+  border-bottom: 4px solid var(--green);
+  padding: 1.5rem;
+}
+#page-detail header.detail-header .inner {
+  max-width: 1100px; margin: 0 auto;
+}
+#page-detail main.detail-main {
+  max-width: 1100px; margin: 0 auto;
+  padding: 3rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 3rem; align-items: start;
+}
+@media (max-width: 700px) {
+  #page-detail main.detail-main { grid-template-columns: 1fr; }
+}
+.detail-img-wrap {
+  position: relative;
+  aspect-ratio: 3/4;
+  border: 4px solid var(--green);
+  box-shadow: 8px 8px 0 rgba(0,0,0,.6);
+  overflow: hidden;
+}
+.detail-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.detail-info .game-big-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  color: var(--green); margin-bottom: 2rem;
+  line-height: 1.5;
+}
+.detail-meta { margin-bottom: 2rem; display: flex; flex-direction: column; gap: .75rem; }
+.detail-meta-item {
+  display: flex; align-items: center; gap: .75rem;
+  font-size: .95rem; color: var(--text);
+}
+.detail-meta-item svg { color: var(--cyan); width: 18px; height: 18px; flex-shrink: 0; }
+.detail-desc {
+  font-size: .88rem; line-height: 1.9;
+  color: var(--text-dim); margin-bottom: 2rem;
+}
+
+/* ==================== EMULATOR PAGE ==================== */
+#page-emulator { background: #000; }
+#page-emulator .emu-bar {
+  background: var(--bg-dark);
+  border-bottom: 2px solid var(--green);
+  padding: .75rem 1rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+#page-emulator .emu-bar .left { display: flex; align-items: center; gap: 1rem; }
+#page-emulator .emu-bar .right { display: flex; align-items: center; gap: .5rem; }
+#page-emulator .emu-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: .65rem; color: #fff;
+  display: none;
+}
+@media (min-width: 600px) { #page-emulator .emu-title { display: block; } }
+
+.emu-container {
+  width: 100%;
+  height: calc(100vh - 56px);
+  display: flex; align-items: center; justify-content: center;
+}
+.rom-missing-box {
+  max-width: 580px;
+  background: var(--bg-dark);
+  border: 4px solid var(--red);
+  padding: 2.5rem; text-align: center;
+}
+.rom-missing-box h2 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1rem; color: var(--red);
+  margin-bottom: 1.5rem; line-height: 1.6;
+}
+.rom-missing-box p { font-size: .85rem; color: #fff; margin-bottom: .75rem; line-height: 1.8; }
+.rom-instructions {
+  background: rgba(0,0,0,.4);
+  border: 2px solid var(--green);
+  padding: 1.25rem; margin-bottom: 1.5rem; text-align: left;
+}
+.rom-instructions p {
+  font-family: 'VT323', monospace; font-size: 1.1rem;
+  color: var(--green); margin-bottom: .5rem;
+}
+.rom-instructions ol {
+  font-size: .8rem; color: #fff;
+  padding-left: 1.2rem; line-height: 2;
+}
+.emulator-iframe { width: 100%; height: 100%; border: none; }
+
+/* ==================== ADMIN PAGE ==================== */
+#page-admin header.admin-header {
+  background: var(--bg-dark);
+  border-bottom: 4px solid var(--green);
+  padding: 1.5rem;
+}
+#page-admin header.admin-header .inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.admin-title {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(.9rem, 2.5vw, 1.6rem);
+  color: var(--green); margin-top: .4rem;
+}
+#page-admin main.admin-main {
+  max-width: 1100px; margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Upload form */
+.upload-form-box {
+  background: var(--bg-dark);
+  border: 2px solid var(--green);
+  padding: 1.5rem; margin-bottom: 2rem;
+}
+.upload-form-box h2 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: .85rem; color: #fff;
+  margin-bottom: 1.5rem;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem; margin-bottom: 1rem;
+}
+.form-field { display: flex; flex-direction: column; gap: .4rem; }
+.form-field label {
+  font-size: .8rem; color: #fff;
+}
+.form-field input, .form-field textarea, .form-field select {
+  padding: .75rem; font-family: 'Space Mono', monospace; font-size: .8rem;
+  background: rgba(0,0,0,.4);
+  border: 2px solid rgba(255,255,255,.1); color: #fff;
+  outline: none; transition: border-color .2s; width: 100%;
+}
+.form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+  border-color: var(--green);
+}
+.form-field select { appearance: none; cursor: pointer; }
+.form-field option { background: var(--bg-dark); }
+.form-field textarea { resize: vertical; }
+.form-hint { font-size: .7rem; color: var(--text-dead); margin-top: .2rem; }
+.form-actions { display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem; flex-wrap: wrap; }
+.form-actions .cancel-btn {
+  background: none; border: none; color: #fff;
+  font-family: 'Space Mono', monospace; font-size: .85rem;
+  cursor: pointer; transition: color .2s;
+}
+.form-actions .cancel-btn:hover { color: var(--green); }
+
+/* Games list */
+.games-list-box {
+  background: var(--bg-dark);
+  border: 2px solid rgba(255,255,255,.1);
+  padding: 1.5rem;
+}
+.games-list-box h2 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: .85rem; color: #fff;
+  margin-bottom: 1.5rem;
+}
+.game-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .9rem 1rem;
+  background: rgba(0,0,0,.2);
+  border: 1px solid rgba(255,255,255,.08);
+  margin-bottom: .5rem; gap: 1rem;
+  transition: border-color .2s;
+}
+.game-row:hover { border-color: var(--green); }
+.game-row .row-left { display: flex; align-items: center; gap: 1rem; }
+.game-row img { width: 56px; height: 56px; object-fit: cover; flex-shrink: 0; }
+.game-row h3 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: .6rem; color: #fff; margin-bottom: .3rem;
+}
+.game-row p { font-size: .78rem; color: var(--text-dim); }
+.empty-state {
+  text-align: center; padding: 3rem 1rem;
+  font-size: .85rem; color: var(--text-dead);
+}
+
+/* ==================== TOAST ==================== */
+#toast-container {
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  display: flex; flex-direction: column; gap: .5rem;
+  z-index: 9999;
+}
+.toast {
+  min-width: 260px; max-width: 360px;
+  padding: .9rem 1.2rem;
+  border: 2px solid;
+  font-family: 'Space Mono', monospace; font-size: .8rem;
+  animation: fadeUp .3s ease;
+}
+.toast.success { background: rgba(0,0,0,.9); border-color: var(--green); color: var(--green); }
+.toast.error   { background: rgba(0,0,0,.9); border-color: var(--red);   color: var(--red); }
+
+/* ==================== MISC ==================== */
+.text-red { color: var(--red); }
+.text-green { color: var(--green); }
+.inline-code {
+  background: rgba(0,0,0,.4); padding: .1rem .4rem;
+  font-family: 'Space Mono', monospace; font-size: .8rem;
+}
+.hidden { display: none !important; }
+```
+
+  </style>
 </head>
-<body>
+<body class="retro-grid">
 
-<header>
-    <h1>Bienvenue sur Site Emulateur</h1>
-    <p>Votre dépôt pour partager et explorer des émulateurs innovants</p>
-</header>
+<!-- ==================== HOME PAGE ==================== -->
 
-<main>
-    <section>
-        <h2>À propos du projet</h2>
-        <p>Ce projet GitHub est dédié aux émulateurs. Explorez le code, les idées et les conceptions proposées par notre équipe et notre communauté.</p>
-    </section>
-    <section>
-        <h2>Accéder au dépôt</h2>
-        <p>Découvrez le dépôt original GitHub ici : <a href="https://github.com/EpiColor91/Site-Emulateur" target="_blank">Site-Emulateur</a></p>
-    </section>
-    <section>
-        <h2>Commencez à collaborer</h2>
-        <p>Participez dès aujourd'hui en téléchargeant votre propre version du projet ou en contribuant avec vos propres améliorations.</p>
-    </section>
-</main>
+<div id="page-home" class="page active">
 
-<footer>
-    <p>&copy; 2026 EpiColor91. Tous droits réservés.</p>
-</footer>
+  <header>
+    <div class="hero-bg"></div>
+    <div class="crt" style="position:absolute;inset:0;"></div>
+    <div class="hero-content">
+      <svg class="hero-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M6 12h2m-1-1v2M16 11h.01M18 13h.01M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+      </svg>
+      <h1 class="hero-title neon-text">RETROCADE X</h1>
+      <p class="hero-sub">
+        Rejouez aux classiques légendaires de Nintendo et Game Boy directement dans votre navigateur
+      </p>
+      <div class="insert-coin">
+        <span>INSÉREZ UNE PIÈCE POUR COMMENCER</span>
+        <span class="blink">_</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="info-banner">
+    <p>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF0055" stroke-width="2" style="flex-shrink:0">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      Pour jouer, ajoutez vos ROMs légales via
+      <button class="link-btn" onclick="navigate('admin')">Admin</button>
+      • Consultez <span class="text-green">ROMS_GUIDE.md</span> pour les options légales
+    </p>
+  </div>
+
+  <main class="platforms-section">
+    <h2 class="section-title">CHOISISSEZ VOTRE CONSOLE</h2>
+    <div class="platforms-grid" id="platforms-grid">
+      <!-- Injected by JS -->
+    </div>
+  </main>
+
+  <footer>© 2026 RETROCADE X — MADE WITH ❤️ FOR RETRO GAMERS</footer>
+</div>
+
+<!-- ==================== LIBRARY PAGE ==================== -->
+
+<div id="page-library" class="page">
+  <header class="lib-header">
+    <div class="inner">
+      <button class="btn-back" onclick="navigate('home')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        RETOUR
+      </button>
+      <h1 class="lib-title" id="lib-title">BIBLIOTHÈQUE</h1>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" class="search-input" id="search-input" placeholder="RECHERCHER UN JEU..." oninput="filterGames()" />
+      </div>
+    </div>
+  </header>
+  <div class="games-grid" id="games-grid"></div>
+</div>
+
+<!-- ==================== GAME DETAIL PAGE ==================== -->
+
+<div id="page-detail" class="page">
+  <header class="detail-header">
+    <div class="inner">
+      <button class="btn-back" id="detail-back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        RETOUR À LA BIBLIOTHÈQUE
+      </button>
+    </div>
+  </header>
+  <main class="detail-main">
+    <div class="detail-img-wrap crt">
+      <img id="detail-img" src="" alt="" />
+    </div>
+    <div class="detail-info">
+      <h1 class="game-big-title" id="detail-title"></h1>
+      <div class="detail-meta" id="detail-meta"></div>
+      <p class="detail-desc" id="detail-desc"></p>
+      <button class="btn-primary" id="detail-play-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        JOUER MAINTENANT
+      </button>
+    </div>
+  </main>
+</div>
+
+<!-- ==================== EMULATOR PAGE ==================== -->
+
+<div id="page-emulator" class="page">
+  <div class="emu-bar">
+    <div class="left">
+      <button class="btn-back" id="emu-back-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        QUITTER
+      </button>
+      <span class="emu-title" id="emu-title"></span>
+    </div>
+    <div class="right" id="emu-controls">
+      <button class="btn-ghost" id="save-btn" style="font-size:.75rem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+        </svg>
+        SAUVEGARDER
+      </button>
+      <button class="btn-primary" id="fullscreen-btn" style="font-size:.65rem;padding:.6rem .9rem;box-shadow:2px 2px 0 #000">
+        <svg id="fs-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+          <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+        </svg>
+        PLEIN ÉCRAN
+      </button>
+    </div>
+  </div>
+  <div class="emu-container" id="emu-container">
+    <!-- Content injected by JS -->
+  </div>
+</div>
+
+<!-- ==================== ADMIN PAGE ==================== -->
+
+<div id="page-admin" class="page">
+  <header class="admin-header">
+    <div class="inner">
+      <div>
+        <button class="btn-back" onclick="navigate('home')" style="margin-bottom:.3rem">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          RETOUR À L'ACCUEIL
+        </button>
+        <h1 class="admin-title">ADMINISTRATION</h1>
+      </div>
+      <button class="btn-primary" id="toggle-upload-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        AJOUTER ROM
+      </button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+```
+<!-- Upload Form -->
+<div class="upload-form-box hidden" id="upload-form-box">
+  <h2>UPLOADER UNE ROM</h2>
+  <div class="form-grid">
+    <div class="form-field">
+      <label>Titre du jeu *</label>
+      <input type="text" id="f-title" placeholder="Ex: Super Mario Bros" required />
+    </div>
+    <div class="form-field">
+      <label>Plateforme *</label>
+      <select id="f-platform">
+        <option value="nes">NES</option>
+        <option value="snes">SNES</option>
+        <option value="gb">Game Boy</option>
+        <option value="gbc">Game Boy Color</option>
+        <option value="gba">Game Boy Advance</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label>Année *</label>
+      <input type="number" id="f-year" value="1990" min="1970" max="2030" required />
+    </div>
+    <div class="form-field">
+      <label>Genre *</label>
+      <input type="text" id="f-genre" placeholder="Ex: Platformer, RPG, Action" required />
+    </div>
+    <div class="form-field">
+      <label>URL de l'image *</label>
+      <input type="url" id="f-image" placeholder="https://..." required />
+    </div>
+    <div class="form-field">
+      <label>Éditeur</label>
+      <input type="text" id="f-publisher" placeholder="Ex: Nintendo" />
+    </div>
+  </div>
+  <div class="form-field" style="margin-bottom:1rem">
+    <label>Description *</label>
+    <textarea id="f-desc" rows="3" placeholder="Description du jeu..." required></textarea>
+  </div>
+  <div class="form-field">
+    <label>Fichier ROM *</label>
+    <input type="file" id="f-rom" accept=".nes,.smc,.sfc,.gb,.gbc,.gba" required />
+    <span class="form-hint">Formats acceptés : .nes, .smc, .sfc, .gb, .gbc, .gba</span>
+  </div>
+  <div class="form-actions">
+    <button class="btn-primary" id="upload-submit-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+        <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
+      </svg>
+      UPLOADER
+    </button>
+    <button class="cancel-btn" id="cancel-upload-btn">Annuler</button>
+  </div>
+</div>
+
+<!-- Games List -->
+<div class="games-list-box">
+  <h2 id="admin-games-count">JEUX (0)</h2>
+  <div id="admin-games-list">
+    <div class="empty-state">Aucun jeu. Commencez par uploader une ROM.</div>
+  </div>
+</div>
+```
+
+  </main>
+</div>
+
+<!-- ==================== TOAST CONTAINER ==================== -->
+
+<div id="toast-container"></div>
+
+<!-- ==================== JS ==================== -->
+
+<script>
+/* ============================================================
+   DATA — demo games (replace/extend as needed)
+   ============================================================ */
+const PLATFORMS = [
+  { id:'nes',  name:'Nintendo (NES)',         year:'1983', game_count:0,
+    img:'https://images.unsplash.com/photo-1591462391994-cb7614f54aff?w=600&q=80' },
+  { id:'snes', name:'Super Nintendo (SNES)',   year:'1990', game_count:0,
+    img:'https://images.unsplash.com/photo-1654648662327-5d4d32cf67bd?w=600&q=80' },
+  { id:'gb',   name:'Game Boy',                year:'1989', game_count:0,
+    img:'https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=600&q=80' },
+  { id:'gbc',  name:'Game Boy Color',          year:'1998', game_count:0,
+    img:'https://images.unsplash.com/photo-1593078165-e5a5d1ec2c9f?w=600&q=80' },
+  { id:'gba',  name:'Game Boy Advance',        year:'2001', game_count:0,
+    img:'https://images.unsplash.com/photo-1614735723656-457e1d9df39c?w=600&q=80' }
+];
+
+// Demo games — add yours here or via admin
+let GAMES = [
+  { id:1,  title:'Super Mario Bros',       platform:'nes',  year:1985, genre:'Platformer',
+    publisher:'Nintendo', rom_filename:'super_mario_bros.nes',
+    image_url:'https://images.unsplash.com/photo-1612404730960-5c71577fca11?w=400&q=80',
+    description:'Le plombier le plus célèbre sauve la Princesse Peach du terrible Bowser à travers 8 mondes remplis d\'aventures et d\'obstacles.' },
+  { id:2,  title:'The Legend of Zelda',    platform:'nes',  year:1986, genre:'Action-RPG',
+    publisher:'Nintendo', rom_filename:'zelda.nes',
+    image_url:'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&q=80',
+    description:'Link explore le royaume d\'Hyrule pour réunir les fragments de la Triforce et sauver la princesse Zelda de Ganon.' },
+  { id:3,  title:'Metroid Fusion',         platform:'gba',  year:2002, genre:'Action-Aventure',
+    publisher:'Nintendo', rom_filename:'metroid_fusion.gba',
+    image_url:'https://images.unsplash.com/photo-1640955014216-75201056c829?w=400&q=80',
+    description:'Samus Aran combat les X-Parasites sur une station spatiale dans cet épisode atmosphérique et intense.' },
+  { id:4,  title:'Pokémon Rouge',          platform:'gb',   year:1996, genre:'RPG',
+    publisher:'Nintendo/Game Freak', rom_filename:'pokemon_rouge.gb',
+    image_url:'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=400&q=80',
+    description:'Devenez le Maître Pokémon ultime en capturant et en entraînant 151 créatures à travers la région de Kanto.' },
+  { id:5,  title:'Donkey Kong Country',   platform:'snes', year:1994, genre:'Platformer',
+    publisher:'Rare/Nintendo', rom_filename:'donkey_kong_country.smc',
+    image_url:'https://images.unsplash.com/photo-1578661996442-748cae3f1e9b?w=400&q=80',
+    description:'DK et Diddy Kong partent récupérer leur stock de bananes volé par King K. Rool dans ce platformer aux graphismes révolutionnaires.' },
+  { id:6,  title:'Kirby\'s Dream Land',   platform:'gb',   year:1992, genre:'Platformer',
+    publisher:'HAL Laboratory', rom_filename:'kirby_dream_land.gb',
+    image_url:'https://images.unsplash.com/photo-1593978583839-f2b5891c2c97?w=400&q=80',
+    description:'Kirby utilise ses pouvoirs d\'inhalation pour avaler ses ennemis et explorer le pays des rêves.' },
+  { id:7,  title:'Castlevania',            platform:'nes',  year:1987, genre:'Action',
+    publisher:'Konami', rom_filename:'castlevania.nes',
+    image_url:'https://images.unsplash.com/photo-1518110925495-5fe2fda0442c?w=400&q=80',
+    description:'Simon Belmont pénètre dans le château de Dracula armé de son fouet légendaire pour anéantir le Seigneur des Ténèbres.' },
+  { id:8,  title:'F-Zero',                platform:'snes', year:1990, genre:'Course',
+    publisher:'Nintendo', rom_filename:'fzero.smc',
+    image_url:'https://images.unsplash.com/photo-1521412644187-c49fa049e84d?w=400&q=80',
+    description:'Course de véhicules antigravité à grande vitesse dans un futur lointain. Sensation de vitesse sans égale sur SNES.' },
+  { id:9,  title:'Pokémon Or',            platform:'gbc',  year:1999, genre:'RPG',
+    publisher:'Nintendo/Game Freak', rom_filename:'pokemon_or.gbc',
+    image_url:'https://images.unsplash.com/photo-1580327344181-c1163234e5a0?w=400&q=80',
+    description:'Explorez deux régions, Johto et Kanto, dans cette suite épique avec 251 Pokémon à collectionner et le cycle jour/nuit.' },
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentPage = 'home';
+let currentPlatform = null;
+let currentGameId = null;
+let isFullscreen = false;
+
+/* ============================================================
+   NAVIGATE
+   ============================================================ */
+function navigate(page, data) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  currentPage = page;
+  window.scrollTo(0,0);
+
+  if (page === 'home')     renderHome();
+  if (page === 'library')  renderLibrary(data);
+  if (page === 'detail')   renderDetail(data);
+  if (page === 'emulator') renderEmulator(data);
+  if (page === 'admin')    renderAdmin();
+}
+
+/* ============================================================
+   HOME
+   ============================================================ */
+function renderHome() {
+  const grid = document.getElementById('platforms-grid');
+
+  // Update game counts
+  PLATFORMS.forEach(p => {
+    p.game_count = GAMES.filter(g => g.platform === p.id).length;
+  });
+
+  grid.innerHTML = PLATFORMS.map(p => `
+    <div class="platform-card fade-up" onclick="navigate('library','${p.id}')">
+      <div class="card-img">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" />
+      </div>
+      <div class="card-body">
+        <h3>${p.name}</h3>
+        <div class="card-meta">
+          <span>${p.year}</span>
+          <span class="badge-green">${p.game_count} JEUX</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   LIBRARY
+   ============================================================ */
+function renderLibrary(platformId) {
+  currentPlatform = platformId;
+  const p = PLATFORMS.find(x => x.id === platformId);
+  document.getElementById('lib-title').textContent = p ? p.name : platformId.toUpperCase();
+  document.getElementById('search-input').value = '';
+  renderGameCards(GAMES.filter(g => g.platform === platformId));
+}
+
+function filterGames() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const filtered = GAMES.filter(g => g.platform === currentPlatform && g.title.toLowerCase().includes(q));
+  renderGameCards(filtered);
+}
+
+function renderGameCards(games) {
+  const grid = document.getElementById('games-grid');
+  if (!games.length) {
+    grid.innerHTML = `<p style="font-family:'Press Start 2P',cursive;font-size:.8rem;color:var(--text-dead);grid-column:1/-1;text-align:center;padding:4rem 0">AUCUN JEU TROUVÉ</p>`;
+    return;
+  }
+  grid.innerHTML = games.map(g => `
+    <div class="game-card fade-up" onclick="navigate('detail',${g.id})">
+      <div class="game-img">
+        <img src="${g.image_url}" alt="${g.title}" loading="lazy" />
+      </div>
+      <div class="game-body">
+        <h3>${g.title}</h3>
+        <div class="game-meta">
+          <span>${g.year}</span>
+          <span class="badge-white">${g.genre}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   DETAIL
+   ============================================================ */
+function renderDetail(gameId) {
+  currentGameId = gameId;
+  const g = GAMES.find(x => x.id === gameId);
+  if (!g) return;
+
+  document.getElementById('detail-img').src = g.image_url;
+  document.getElementById('detail-img').alt = g.title;
+  document.getElementById('detail-title').textContent = g.title;
+  document.getElementById('detail-desc').textContent = g.description;
+
+  document.getElementById('detail-back-btn').onclick = () => navigate('library', g.platform);
+  document.getElementById('detail-play-btn').onclick = () => navigate('emulator', gameId);
+
+  const meta = document.getElementById('detail-meta');
+  meta.innerHTML = `
+    <div class="detail-meta-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span>Année : <strong>${g.year}</strong></span>
+    </div>
+    <div class="detail-meta-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+        <line x1="7" y1="7" x2="7.01" y2="7"/>
+      </svg>
+      <span>Genre : <strong>${g.genre}</strong></span>
+    </div>
+    ${g.publisher ? `
+    <div class="detail-meta-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+        <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+      </svg>
+      <span>Éditeur : <strong>${g.publisher}</strong></span>
+    </div>` : ''}
+  `;
+}
+
+/* ============================================================
+   EMULATOR
+   ============================================================ */
+function renderEmulator(gameId) {
+  currentGameId = gameId;
+  const g = GAMES.find(x => x.id === gameId);
+  if (!g) return;
+
+  document.getElementById('emu-title').textContent = g.title;
+  document.getElementById('emu-back-btn').onclick = () => navigate('detail', gameId);
+
+  const container = document.getElementById('emu-container');
+
+  // Show ROM missing message (since we're static/demo)
+  container.innerHTML = `
+    <div class="rom-missing-box">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#FF0055" stroke-width="1.5"
+           style="margin:0 auto 1.5rem;display:block">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <h2>ROM MANQUANTE</h2>
+      <p>Le fichier ROM pour <strong>${g.title}</strong> n'est pas encore disponible.</p>
+      <p style="font-size:.78rem;color:var(--text-dim)">
+        Fichier attendu : <span class="inline-code">${g.rom_filename}</span>
+      </p>
+      <div class="rom-instructions">
+        <p>COMMENT AJOUTER UNE ROM :</p>
+        <ol>
+          <li>Obtenez une ROM légale (homebrew, domaine public ou dump de votre cartouche)</li>
+          <li>Accédez à la page <span class="text-green">Admin</span></li>
+          <li>Uploadez votre fichier ROM avec ce jeu ou créez-en un nouveau</li>
+        </ol>
+      </div>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <button class="btn-primary" onclick="navigate('admin')">ALLER À L'ADMIN</button>
+        <button class="cancel-btn" style="color:#fff;background:none;border:none;font-family:'Space Mono',monospace;cursor:pointer"
+                onclick="navigate('detail',${gameId})">Retour au jeu</button>
+      </div>
+      <p style="margin-top:1.5rem;font-size:.72rem;color:var(--text-dead);border-top:1px solid rgba(255,255,255,.1);padding-top:1.25rem">
+        💡 Consultez le fichier <span class="inline-code">ROMS_GUIDE.md</span> pour trouver des ROMs légales
+      </p>
+    </div>
+  `;
+
+  document.getElementById('save-btn').onclick = () => {
+    showToast('Partie sauvegardée !', 'success');
+  };
+
+  document.getElementById('fullscreen-btn').onclick = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      isFullscreen = true;
+      document.getElementById('fullscreen-btn').innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="8 3 3 3 3 8"/><polyline points="21 8 21 3 16 3"/>
+          <polyline points="3 16 3 21 8 21"/><polyline points="16 21 21 21 21 16"/>
+        </svg> NORMAL
+      `;
+    } else {
+      document.exitFullscreen();
+      isFullscreen = false;
+      document.getElementById('fullscreen-btn').innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+          <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+        </svg> PLEIN ÉCRAN
+      `;
+    }
+  };
+}
+
+/* ============================================================
+   ADMIN
+   ============================================================ */
+function renderAdmin() {
+  updateAdminList();
+
+  document.getElementById('toggle-upload-btn').onclick = () => {
+    document.getElementById('upload-form-box').classList.toggle('hidden');
+  };
+  document.getElementById('cancel-upload-btn').onclick = () => {
+    document.getElementById('upload-form-box').classList.add('hidden');
+    resetForm();
+  };
+  document.getElementById('upload-submit-btn').onclick = handleUpload;
+}
+
+function updateAdminList() {
+  const list = document.getElementById('admin-games-list');
+  document.getElementById('admin-games-count').textContent = `JEUX (${GAMES.length})`;
+
+  if (!GAMES.length) {
+    list.innerHTML = `<div class="empty-state">Aucun jeu. Commencez par uploader une ROM.</div>`;
+    return;
+  }
+  list.innerHTML = GAMES.map(g => `
+    <div class="game-row">
+      <div class="row-left">
+        <img src="${g.image_url}" alt="${g.title}" onerror="this.src='https://via.placeholder.com/56x56/1a1a2e/8BAC0F?text=?'" />
+        <div>
+          <h3>${g.title}</h3>
+          <p>${g.platform.toUpperCase()} — ${g.year} — ${g.genre}</p>
+        </div>
+      </div>
+      <button class="btn-danger" onclick="deleteGame(${g.id})" title="Supprimer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </button>
+    </div>
+  `).join('');
+}
+
+function handleUpload() {
+  const title     = document.getElementById('f-title').value.trim();
+  const platform  = document.getElementById('f-platform').value;
+  const year      = parseInt(document.getElementById('f-year').value);
+  const genre     = document.getElementById('f-genre').value.trim();
+  const image_url = document.getElementById('f-image').value.trim();
+  const desc      = document.getElementById('f-desc').value.trim();
+  const publisher = document.getElementById('f-publisher').value.trim();
+  const romFile   = document.getElementById('f-rom').files[0];
+
+  if (!title || !genre || !image_url || !desc || !romFile) {
+    showToast('Veuillez remplir tous les champs obligatoires.', 'error');
+    return;
+  }
+
+  const newGame = {
+    id: Date.now(),
+    title, platform, year, genre, image_url,
+    description: desc,
+    publisher: publisher || null,
+    rom_filename: romFile.name
+  };
+
+  GAMES.push(newGame);
+  showToast(`"${title}" ajouté avec succès !`, 'success');
+  document.getElementById('upload-form-box').classList.add('hidden');
+  resetForm();
+  updateAdminList();
+}
+
+function deleteGame(id) {
+  if (!confirm('Voulez-vous vraiment supprimer ce jeu ?')) return;
+  const g = GAMES.find(x => x.id === id);
+  GAMES = GAMES.filter(x => x.id !== id);
+  if (g) showToast(`"${g.title}" supprimé.`, 'success');
+  updateAdminList();
+}
+
+function resetForm() {
+  ['f-title','f-genre','f-image','f-desc','f-publisher'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('f-year').value = 1990;
+  document.getElementById('f-platform').value = 'nes';
+  document.getElementById('f-rom').value = '';
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(msg, type='success') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.remove(); }, 3000);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderHome();
+</script>
 
 </body>
 </html>
