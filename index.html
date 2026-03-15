@@ -987,13 +987,21 @@ function renderEmulator(gameId) {
   const container = document.getElementById('emu-container');
 
   container.innerHTML = `
-    <div style="text-align:center">
-      <div style="font-family:'Press Start 2P',cursive;font-size:.9rem;color:var(--green);margin-bottom:1.5rem;animation:neonPulse 2s ease-in-out infinite">
-        CHARGEMENT DU JEU...
-      </div>
-      <div style="font-family:'VT323',monospace;font-size:1.2rem;color:var(--text-dim)">
+    <div style="text-align:center;padding:2rem">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"
+           style="margin:0 auto 1.5rem;display:block">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M6 12h2m-1-1v2M16 11h.01M18 13h.01M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+      </svg>
+      <div style="font-family:'Press Start 2P',cursive;font-size:.9rem;color:var(--green);margin-bottom:.75rem">
         ${g.title}
       </div>
+      <div style="font-family:'VT323',monospace;font-size:1.3rem;color:var(--text-dim);margin-bottom:2rem">
+        Connectez un backend avec EmulatorJS pour lancer la ROM
+      </div>
+      <button class="btn-primary" onclick="navigate('detail',${gameId})">
+        ← RETOUR AU JEU
+      </button>
     </div>
   `;
 
