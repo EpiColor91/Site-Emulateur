@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
-import { Gamepad2 } from "lucide-react";
+import { Gamepad2, AlertCircle } from "lucide-react";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -60,6 +60,18 @@ const HomePage = () => {
           </div>
         </div>
       </header>
+
+      {/* Info Banner */}
+      <div className="bg-[#232342] border-b-2 border-[#FF0055] py-4">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-center gap-3 text-center">
+            <AlertCircle className="w-5 h-5 text-[#FF0055] flex-shrink-0" />
+            <p className="font-['Space_Mono'] text-sm text-[#E0E0E0]">
+              Pour jouer, ajoutez vos ROMs légales via <button onClick={() => navigate('/admin')} className="text-[#8BAC0F] hover:text-[#9BBC0F] underline">/admin</button> • Consultez <span className="text-[#8BAC0F]">ROMS_GUIDE.md</span> pour les options légales
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Platforms Grid */}
       <main className="max-w-7xl mx-auto px-4 py-12 md:py-16">
