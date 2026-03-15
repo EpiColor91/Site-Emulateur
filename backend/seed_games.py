@@ -21,7 +21,7 @@ games_data = [
         "platform": "nes",
         "year": 1985,
         "genre": "Platformer",
-        "image_url": "https://images.unsplash.com/photo-1629918481783-c68e951d5a34",
+        "image_url": "https://m.media-amazon.com/images/I/71wLUApbQQL.jpg",
         "rom_filename": "super_mario_bros.nes",
         "description": "Le jeu de plateforme classique qui a défini le genre. Aidez Mario à sauver la Princesse Peach du méchant Bowser à travers 8 mondes fantastiques.",
         "publisher": "Nintendo"
@@ -32,7 +32,7 @@ games_data = [
         "platform": "nes",
         "year": 1986,
         "genre": "Action-Adventure",
-        "image_url": "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf",
+        "image_url": "https://www.gamecash.fr/thumbnail-600/zelda-eu-e107762.jpg",
         "rom_filename": "zelda.nes",
         "description": "Embarquez dans une quête épique pour sauver la Princesse Zelda et vaincre Ganon. Explorez des donjons, résolvez des énigmes et découvrez des secrets.",
         "publisher": "Nintendo"
@@ -43,7 +43,7 @@ games_data = [
         "platform": "nes",
         "year": 1986,
         "genre": "Action-Adventure",
-        "image_url": "https://images.unsplash.com/photo-1550745165-9bc0b252726f",
+        "image_url": "https://upload.wikimedia.org/wikipedia/en/5/5d/Metroid_boxart.jpg",
         "rom_filename": "metroid.nes",
         "description": "Incarnez Samus Aran dans une aventure de science-fiction. Explorez la planète Zebes et affrontez les Space Pirates.",
         "publisher": "Nintendo"
@@ -54,7 +54,7 @@ games_data = [
         "platform": "nes",
         "year": 1988,
         "genre": "Action",
-        "image_url": "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55",
+        "image_url": "https://www.gamecash.fr/thumbnail-600/mega-man-2-e15659.jpg",
         "rom_filename": "megaman2.nes",
         "description": "Le jeu d'action classique avec Mega Man. Battez 8 Robot Masters et volez leurs armes pour vaincre Dr. Wily.",
         "publisher": "Capcom"
@@ -67,7 +67,7 @@ games_data = [
         "platform": "snes",
         "year": 1990,
         "genre": "Platformer",
-        "image_url": "https://images.unsplash.com/photo-1614465930893-eb7ae7851f8e",
+        "image_url": "https://www.romstation.fr/romstation/resources/games/snes/cover/36343.jpg?1677873431",
         "rom_filename": "super_mario_world.smc",
         "description": "Mario et Yoshi partent à l'aventure dans Dinosaur Land. Un chef-d'œuvre de plateforme avec des niveaux secrets et des power-ups innovants.",
         "publisher": "Nintendo"
@@ -78,7 +78,7 @@ games_data = [
         "platform": "snes",
         "year": 1991,
         "genre": "Action-Adventure",
-        "image_url": "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e",
+        "image_url": "https://m.media-amazon.com/images/I/71wfmH16Z8L.jpg",
         "rom_filename": "zelda_alttp.smc",
         "description": "L'un des meilleurs jeux Zelda de tous les temps. Voyagez entre le Monde de la Lumière et le Monde des Ténèbres dans cette aventure épique.",
         "publisher": "Nintendo"
@@ -89,7 +89,7 @@ games_data = [
         "platform": "snes",
         "year": 1994,
         "genre": "Action-Adventure",
-        "image_url": "https://images.unsplash.com/photo-1511512578047-dfb367046420",
+        "image_url": "https://www.nintendo.com/eu/media/images/10_share_images/games_15/super_nintendo_5/H2x1_SNES_SuperMetroid.jpg",
         "rom_filename": "super_metroid.smc",
         "description": "Le chef-d'œuvre atmosphérique de la série Metroid. Explorez la planète Zebes dans cette aventure non-linéaire captivante.",
         "publisher": "Nintendo"
@@ -102,7 +102,7 @@ games_data = [
         "platform": "gb",
         "year": 1989,
         "genre": "Puzzle",
-        "image_url": "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf",
+        "image_url": "https://www.cdiscount.com/pdt2/2/7/7/1/700x700/nin0045496730277/rw/tetris-game-boy.jpg",
         "rom_filename": "tetris.gb",
         "description": "Le jeu de puzzle addictif qui a fait du Game Boy un succès mondial. Empilez les blocs et complétez les lignes !",
         "publisher": "Nintendo"
@@ -113,7 +113,7 @@ games_data = [
         "platform": "gb",
         "year": 1996,
         "genre": "RPG",
-        "image_url": "https://images.unsplash.com/photo-1605979399824-5d8c0b6bf52a",
+        "image_url": "https://www.rpgamers.fr/images/rpgs/Pokemon-Version-Rouge-50225170525-1828-titre.jpg",
         "rom_filename": "pokemon_red.gb",
         "description": "Attrapez-les tous ! Le début du phénomène Pokémon. Devenez le meilleur Dresseur Pokémon de Kanto.",
         "publisher": "Nintendo"
@@ -124,7 +124,7 @@ games_data = [
         "platform": "gb",
         "year": 1993,
         "genre": "Action-Adventure",
-        "image_url": "https://images.unsplash.com/photo-1542751371-adc38448a05e",
+        "image_url": "https://www.retroplace.com/pics/gameboy/packshots/133172--the-legend-of-zelda-links-awakening.png",
         "rom_filename": "zelda_la.gb",
         "description": "Link se réveille sur une île mystérieuse. Une aventure Zelda unique et mémorable sur Game Boy.",
         "publisher": "Nintendo"
@@ -137,7 +137,7 @@ games_data = [
         "platform": "gbc",
         "year": 2000,
         "genre": "RPG",
-        "image_url": "https://images.unsplash.com/photo-1613678891402-c1b8e5c9b9e6",
+        "image_url": "https://www.gamecash.fr/thumbnail-400-450/pokemon-cristal-e57728.jpg",
         "rom_filename": "pokemon_crystal.gbc",
         "description": "La version améliorée de Pokémon Or et Argent avec des animations et la possibilité de choisir un personnage féminin.",
         "publisher": "Nintendo"
@@ -148,7 +148,7 @@ games_data = [
         "platform": "gbc",
         "year": 2001,
         "genre": "Action-Adventure",
-        "image_url": "https://images.unsplash.com/photo-1587398997326-ab4f801d4c10",
+        "image_url": "https://image.jeuxvideo.com/images/gb/z/e/zelagb0f.jpg",
         "rom_filename": "zelda_oracle_ages.gbc",
         "description": "Voyagez dans le temps pour résoudre des énigmes complexes dans cette aventure Zelda innovante.",
         "publisher": "Nintendo"
@@ -161,7 +161,7 @@ games_data = [
         "platform": "gba",
         "year": 2004,
         "genre": "RPG",
-        "image_url": "https://images.unsplash.com/photo-1585152045213-1e4471cfa5a9",
+        "image_url": "https://i.ebayimg.com/images/g/kz0AAOSwC19ix-V4/s-l1200.jpg",
         "rom_filename": "pokemon_emerald.gba",
         "description": "Explorez la région de Hoenn et affrontez les équipes Magma et Aqua dans cette version améliorée de Pokémon Rubis et Saphir.",
         "publisher": "Nintendo"
@@ -172,7 +172,7 @@ games_data = [
         "platform": "gba",
         "year": 2003,
         "genre": "Platformer",
-        "image_url": "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55",
+        "image_url": "https://m.media-amazon.com/images/I/71BYQp0fZ1L.jpg",
         "rom_filename": "mario_advance4.gba",
         "description": "Le remake de Super Mario Bros. 3 avec des graphismes améliorés et de nouveaux niveaux.",
         "publisher": "Nintendo"
@@ -183,7 +183,7 @@ games_data = [
         "platform": "gba",
         "year": 2002,
         "genre": "Action-Adventure",
-        "image_url": "https://images.unsplash.com/photo-1550745165-9bc0b252726f",
+        "image_url": "https://image.jeuxvideo.com/images/ga/m/e/mefuga0f.jpg",
         "rom_filename": "metroid_fusion.gba",
         "description": "Samus Aran affronte un parasite X mortel dans cette suite atmosphérique et terrifiante.",
         "publisher": "Nintendo"
