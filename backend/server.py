@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Form
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
+import shutil
 
 
 ROOT_DIR = Path(__file__).parent
@@ -96,6 +97,87 @@ async def create_game(game_data: GameCreate):
     doc = game.model_dump()
     await db.games.insert_one(doc)
     return game
+
+@api_router.delete("/games/{game_id}")
+async def delete_game(game_id: str):
+    """Delete a game"""
+    game = await db.games.find_one({"id": game_id}, {"_id": 0})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    # Delete ROM file if exists
+    rom_path = ROOT_DIR / "roms" / game["rom_filename"]
+    if rom_path.exists():
+        rom_path.unlink()
+    
+    # Delete from database
+    await db.games.delete_one({"id": game_id})
+    return {"message": "Game deleted successfully"}
+
+@api_router.post("/upload-rom")
+async def upload_rom(
+    file: UploadFile = File(...),
+    title: str = Form(...),
+    platform: str = Form(...),
+    year: int = Form(...),
+    genre: str = Form(...),
+    image_url: str = Form(...),
+    description: str = Form(...),
+    publisher: Optional[str] = Form(None)
+):
+    """Upload a ROM file and create a game entry"""
+    
+    # Validate platform
+    valid_platforms = ["nes", "snes", "gb", "gbc", "gba"]
+    if platform.lower() not in valid_platforms:
+        raise HTTPException(status_code=400, detail=f"Invalid platform. Must be one of: {valid_platforms}")
+    
+    # Validate file extension
+    valid_extensions = {
+        "nes": [".nes"],
+        "snes": [".smc", ".sfc"],
+        "gb": [".gb"],
+        "gbc": [".gbc"],
+        "gba": [".gba"]
+    }
+    
+    file_ext = Path(file.filename).suffix.lower()
+    if file_ext not in valid_extensions[platform.lower()]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid file extension for {platform}. Expected: {valid_extensions[platform.lower()]}"
+        )
+    
+    # Generate unique filename
+    rom_filename = f"{uuid.uuid4()}{file_ext}"
+    rom_path = ROOT_DIR / "roms" / rom_filename
+    
+    # Save ROM file
+    try:
+        with open(rom_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save ROM: {str(e)}")
+    
+    # Create game entry
+    game = Game(
+        title=title,
+        platform=platform.lower(),
+        year=year,
+        genre=genre,
+        image_url=image_url,
+        rom_filename=rom_filename,
+        description=description,
+        publisher=publisher
+    )
+    
+    doc = game.model_dump()
+    await db.games.insert_one(doc)
+    
+    return {
+        "message": "ROM uploaded successfully",
+        "game": game
+    }
 
 @api_router.get("/roms/{rom_filename}")
 async def get_rom(rom_filename: str):

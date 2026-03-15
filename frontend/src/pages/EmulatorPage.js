@@ -3,19 +3,40 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "@/App";
 import { ArrowLeft, Maximize, Minimize, Save } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const EmulatorPage = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [emulatorUrl, setEmulatorUrl] = useState("");
 
   useEffect(() => {
     fetchGame();
   }, [gameId]);
+
+  useEffect(() => {
+    if (game) {
+      // Mapper la plateforme au core EmulatorJS
+      const coreMap = {
+        'nes': 'nes',
+        'snes': 'snes',
+        'gb': 'gb',
+        'gbc': 'gbc',
+        'gba': 'gba'
+      };
+      
+      const core = coreMap[game.platform] || 'nes';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL;
+      const romUrl = `${backendUrl}/api/roms/${game.rom_filename}`;
+      
+      // Construire l'URL de l'émulateur avec les paramètres
+      const url = `/emulator.html?core=${core}&gameUrl=${encodeURIComponent(romUrl)}`;
+      setEmulatorUrl(url);
+    }
+  }, [game]);
 
   const fetchGame = async () => {
     try {
@@ -30,23 +51,19 @@ const EmulatorPage = () => {
 
   const handleSaveState = async () => {
     try {
-      // Simuler la sauvegarde pour le moment
       const saveData = btoa(JSON.stringify({ gameId, timestamp: Date.now() }));
       await axios.post(`${API}/saves`, {
         game_id: gameId,
         save_data: saveData
       });
       
-      toast({
-        title: "Partie sauvegardée !",
+      toast.success("Partie sauvegardée !", {
         description: "Votre progression a été enregistrée.",
       });
     } catch (error) {
       console.error("Erreur lors de la sauvegarde:", error);
-      toast({
-        title: "Erreur",
+      toast.error("Erreur", {
         description: "Impossible de sauvegarder la partie.",
-        variant: "destructive"
       });
     }
   };
@@ -130,36 +147,22 @@ const EmulatorPage = () => {
       </div>
 
       {/* Emulator Container */}
-      <div className="relative flex items-center justify-center" style={{ height: 'calc(100vh - 60px)' }}>
-        {/* CRT Effect Overlay */}
-        <div className="crt-effect absolute inset-0 pointer-events-none z-10"></div>
-        
-        {/* Emulator Placeholder */}
-        <div className="relative max-w-4xl w-full aspect-[4/3] bg-[#1a1a2e] border-4 border-[#8BAC0F] shadow-[0_0_50px_rgba(139,172,15,0.3)]">
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-            <div className="mb-8">
-              <img
-                src={game.image_url}
-                alt={game.title}
-                className="w-48 h-auto mx-auto opacity-50"
-              />
-            </div>
-            
-            <p className="font-['Press_Start_2P'] text-sm md:text-base text-[#8BAC0F] mb-4 leading-relaxed">
-              ÉMULATEUR EN COURS
-            </p>
-            
-            <p className="font-['Space_Mono'] text-sm text-[#A0A0B0] max-w-md leading-relaxed">
-              L'émulateur JavaScript sera intégré ici avec EmulatorJS pour jouer à {game.title}.
-              Fichier ROM: {game.rom_filename}
-            </p>
-            
-            <div className="mt-8 font-['VT323'] text-lg text-[#606070]">
-              <p>Contrôles:</p>
-              <p>CLAVIER: Flèches + Z (A) + X (B) + Entrée (Start) + Shift (Select)</p>
+      <div className="relative" style={{ height: 'calc(100vh - 60px)' }}>
+        {emulatorUrl ? (
+          <iframe
+            src={emulatorUrl}
+            className="w-full h-full border-0"
+            title="EmulatorJS"
+            allowFullScreen
+            data-testid="emulator-iframe"
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="font-['Press_Start_2P'] text-sm text-[#8BAC0F]">
+              CHARGEMENT DE L'ÉMULATEUR...
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

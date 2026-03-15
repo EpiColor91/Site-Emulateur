@@ -6,6 +6,7 @@ import HomePage from "@/pages/HomePage";
 import LibraryPage from "@/pages/LibraryPage";
 import GameDetailPage from "@/pages/GameDetailPage";
 import EmulatorPage from "@/pages/EmulatorPage";
+import AdminPage from "@/pages/AdminPage";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -19,6 +20,7 @@ function App() {
           <Route path="/library/:platform" element={<LibraryPage />} />
           <Route path="/game/:gameId" element={<GameDetailPage />} />
           <Route path="/play/:gameId" element={<EmulatorPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
     </div>
