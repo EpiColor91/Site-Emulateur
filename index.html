@@ -986,34 +986,14 @@ function renderEmulator(gameId) {
 
   const container = document.getElementById('emu-container');
 
-  // Show ROM missing message (since we're static/demo)
   container.innerHTML = `
-    <div class="rom-missing-box">
-      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#FF0055" stroke-width="1.5"
-           style="margin:0 auto 1.5rem;display:block">
-        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-      <h2>ROM MANQUANTE</h2>
-      <p>Le fichier ROM pour <strong>${g.title}</strong> n'est pas encore disponible.</p>
-      <p style="font-size:.78rem;color:var(--text-dim)">
-        Fichier attendu : <span class="inline-code">${g.rom_filename}</span>
-      </p>
-      <div class="rom-instructions">
-        <p>COMMENT AJOUTER UNE ROM :</p>
-        <ol>
-          <li>Obtenez une ROM légale (homebrew, domaine public ou dump de votre cartouche)</li>
-          <li>Accédez à la page <span class="text-green">Admin</span></li>
-          <li>Uploadez votre fichier ROM avec ce jeu ou créez-en un nouveau</li>
-        </ol>
+    <div style="text-align:center">
+      <div style="font-family:'Press Start 2P',cursive;font-size:.9rem;color:var(--green);margin-bottom:1.5rem;animation:neonPulse 2s ease-in-out infinite">
+        CHARGEMENT DU JEU...
       </div>
-      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-        <button class="btn-primary" onclick="navigate('admin')">ALLER À L'ADMIN</button>
-        <button class="cancel-btn" style="color:#fff;background:none;border:none;font-family:'Space Mono',monospace;cursor:pointer"
-                onclick="navigate('detail',${gameId})">Retour au jeu</button>
+      <div style="font-family:'VT323',monospace;font-size:1.2rem;color:var(--text-dim)">
+        ${g.title}
       </div>
-      <p style="margin-top:1.5rem;font-size:.72rem;color:var(--text-dead);border-top:1px solid rgba(255,255,255,.1);padding-top:1.25rem">
-        💡 Consultez le fichier <span class="inline-code">ROMS_GUIDE.md</span> pour trouver des ROMs légales
-      </p>
     </div>
   `;
 
